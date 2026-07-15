@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RevValue - Used Car Price Prediction & Analytics</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- PapaParse for CSV parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark-mode">
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">
+                    <i data-lucide="gauge"></i>
+                </div>
+                <div>
+                    <h1>RevValue</h1>
+                    <span class="brand-subtitle">Enterprise Price Predictor</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-tab="predictor-tab">
+                    <i data-lucide="car"></i>
+                    <span>Predict Price</span>
+                </button>
+                <button class="nav-item" data-tab="batch-tab">
+                    <i data-lucide="upload-cloud"></i>
+                    <span>Batch Prediction</span>
+                </button>
+                <button class="nav-item" data-tab="analytics-tab">
+                    <i data-lucide="bar-chart-3"></i>
+                    <span>Data Insights</span>
+                </button>
+                <button class="nav-item" data-tab="model-tab">
+                    <i data-lucide="line-chart"></i>
+                    <span>Model Analytics</span>
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="model-status">
+                    <div class="status-dot online"></div>
+                    <div>
+                        <div class="status-title">Linear Regression OLS</div>
+                        <div class="status-meta">Accuracy (R²): 89.8%</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="header-title">
+                    <h2 id="current-tab-title">Price Predictor</h2>
+                    <p id="current-tab-desc">Estimate used car values using statsmodels OLS Linear Regression</p>
+                </div>
+                <div class="header-actions">
+                    <div class="data-badge">
+                        <i data-lucide="database"></i>
+                        <span>Dataset: 5,831 Cars</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Panels -->
+            <div class="content-body">
+                
+                <!-- Tab 1: Predictor Form -->
+                <section id="predictor-tab" class="tab-panel active">
+                    <div class="grid-2col">
+                        <!-- Left: Input Form Card -->
+                        <div class="card form-card">
+                            <div class="card-header">
+                                <i data-lucide="sliders"></i>
+                                <h3>Car Specifications</h3>
+                            </div>
+                            <form id="prediction-form" class="form-grid">
+                                <!-- Brand -->
+                                <div class="form-group">
+                                    <label for="car-brand">Brand</label>
+                                    <select id="car-brand" required>
+                                        <option value="" disabled selected>Select Brand</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Model -->
+                                <div class="form-group">
+                                    <label for="car-model">Model</label>
+                                    <select id="car-model" required disabled>
+                                        <option value="" disabled selected>Select Model</option>
+                                    </select>
+                                </div>
+
+                                <!-- Variant -->
+                                <div class="form-group">
+                                    <label for="car-variant">Variant</label>
+                                    <select id="car-variant" required disabled>
+                                        <option value="" disabled selected>Select Variant</option>
+                                    </select>
+                                </div>
+
+                                <!-- Manufacturing Year -->
+                                <div class="form-group">
+                                    <label for="car-year">Manufacturing Year</label>
+                                    <select id="car-year" required>
+                                        <option value="" disabled selected>Select Year</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Location -->
+                                <div class="form-group">
+                                    <label for="car-location">Location</label>
+                                    <select id="car-location" required>
+                                        <option value="" disabled selected>Select Location</option>
+                                    </select>
+                                </div>
+
+                                <!-- Kilometers Driven -->
+                                <div class="form-group">
+                                    <label for="car-km">Kilometers Driven</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="car-km" placeholder="e.g. 50000" min="100" required>
+                                        <span class="unit">km</span>
+                                    </div>
+                                </div>
+
+                                <!-- Fuel Type -->
+                                <div class="form-group">
+                                    <label for="car-fuel">Fuel Type</label>
+                                    <select id="car-fuel" required>
+                                        <option value="" disabled selected>Select Fuel</option>
+                                    </select>
+                                </div>
+
+                                <!-- Transmission -->
+                                <div class="form-group">
+                                    <label for="car-transmission">Transmission</label>
+                                    <select id="car-transmission" required>
+                                        <option value="" disabled selected>Select Transmission</option>
+                                    </select>
+                                </div>
+
+                                <!-- Owner Type -->
+                                <div class="form-group">
+                                    <label for="car-owner">Owner Type</label>
+                                    <select id="car-owner" required>
+                                        <option value="" disabled selected>Select Owner Type</option>
+                                    </select>
+                                </div>
+
+                                <!-- Mileage -->
+                                <div class="form-group">
+                                    <label for="car-mileage">Mileage</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="car-mileage" placeholder="e.g. 18.2" step="0.01" required>
+                                        <span class="unit">kmpl</span>
+                                    </div>
+                                </div>
+
+                                <!-- Power -->
+                                <div class="form-group">
+                                    <label for="car-power">Engine Power</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="car-power" placeholder="e.g. 110" step="0.01" required>
+                                        <span class="unit">bhp</span>
+                                    </div>
+                                </div>
+
+                                <!-- Seats -->
+                                <div class="form-group">
+                                    <label for="car-seats">Seats</label>
+                                    <input type="number" id="car-seats" placeholder="e.g. 5" min="2" max="10" required>
+                                </div>
+
+                                <div class="form-actions span-all">
+                                    <button type="button" id="reset-form-btn" class="btn btn-secondary">
+                                        <i data-lucide="rotate-ccw"></i> Reset
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i data-lucide="sparkles"></i> Predict Value
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Right: Prediction Results Card -->
+                        <div class="result-column">
+                            <div class="card result-card empty-state" id="result-placeholder">
+                                <div class="empty-icon">
+                                    <i data-lucide="sparkles"></i>
+                                </div>
+                                <h3>Calculate Predicted Value</h3>
+                                <p>Fill in the specifications on the left and click "Predict Value" to run the regression model.</p>
+                            </div>
+
+                            <div class="card result-card predicted-state hidden" id="result-display">
+                                <div class="prediction-container">
+                                    <span class="prediction-label">ESTIMATED VALUATION</span>
+                                    <div class="price-value-box">
+                                        <span class="currency">₹</span>
+                                        <span class="price" id="predicted-price">--.--</span>
+                                        <span class="lakh">Lakh</span>
+                                    </div>
+                                    <p class="prediction-confidence">Predicted log-price converted via exp() transform</p>
+                                </div>
+
+                                <div class="analysis-section">
+                                    <h4>Factors Influencing Price</h4>
+                                    <div class="factors-list" id="price-drivers-list">
+                                        <!-- Will be filled by js -->
+                                    </div>
+                                </div>
+
+                                <div class="quick-compare">
+                                    <h4>Market Benchmark</h4>
+                                    <div class="compare-bar-container">
+                                        <div class="compare-labels">
+                                            <span id="compare-brand-class">Brand Class Average</span>
+                                            <span id="compare-current">This Car</span>
+                                        </div>
+                                        <div class="compare-bar-bg">
+                                            <div class="compare-bar-avg" id="compare-avg-marker"></div>
+                                            <div class="compare-bar-fill" id="compare-val-fill"></div>
+                                        </div>
+                                        <p class="compare-note" id="compare-explanation"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab 2: Batch Predictor -->
+                <section id="batch-tab" class="tab-panel">
+                    <div class="card batch-card">
+                        <div class="card-header">
+                            <i data-lucide="upload-cloud"></i>
+                            <h3>Upload CSV for Bulk Estimation</h3>
+                        </div>
+                        
+                        <div class="upload-area" id="csv-drop-zone">
+                            <input type="file" id="csv-file-input" accept=".csv" class="hidden">
+                            <i data-lucide="file-spreadsheet" class="upload-icon"></i>
+                            <p class="upload-text">Drag and drop your car inventory CSV here, or <span>browse files</span></p>
+                            <p class="upload-subtitle">CSV must include columns: <code>Brand</code> (or <code>Name</code>), <code>Location</code>, <code>Year</code>, <code>Kilometers_Driven</code>, <code>Fuel_Type</code>, <code>Transmission</code>, <code>Owner_Type</code>, <code>Mileage</code>, <code>Power</code>, <code>Seats</code>. Optional: <code>Model</code>, <code>Variant</code>.</p>
+                            <button type="button" id="download-template-btn" class="btn btn-secondary btn-sm">
+                                <i data-lucide="download"></i> Download CSV Template
+                            </button>
+                        </div>
+
+                        <!-- Batch Processed Table (hidden initially) -->
+                        <div id="batch-results-container" class="hidden">
+                            <div class="batch-summary-strip">
+                                <div class="stat-mini">
+                                    <span class="stat-mini-label">Rows Loaded</span>
+                                    <span class="stat-mini-val" id="batch-row-count">0</span>
+                                </div>
+                                <div class="stat-mini">
+                                    <span class="stat-mini-label">Avg Predicted Price</span>
+                                    <span class="stat-mini-val" id="batch-avg-price">₹0.00L</span>
+                                </div>
+                                <div class="stat-mini">
+                                    <span class="stat-mini-label">Max Predicted Price</span>
+                                    <span class="stat-mini-val" id="batch-max-price">₹0.00L</span>
+                                </div>
+                                <div class="batch-actions">
+                                    <button id="export-csv-btn" class="btn btn-primary btn-sm">
+                                        <i data-lucide="download"></i> Export Predictions
+                                    </button>
+                                    <button id="clear-batch-btn" class="btn btn-secondary btn-sm">
+                                        <i data-lucide="trash-2"></i> Clear
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="table-controls">
+                                <div class="search-box">
+                                    <i data-lucide="search"></i>
+                                    <input type="text" id="table-search" placeholder="Search brands, locations...">
+                                </div>
+                            </div>
+
+                            <div class="table-container">
+                                <table class="data-table" id="batch-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Brand</th>
+                                            <th>Model</th>
+                                            <th>Variant</th>
+                                            <th>Location</th>
+                                            <th>Year</th>
+                                            <th>KM Driven</th>
+                                            <th>Fuel</th>
+                                            <th>Trans.</th>
+                                            <th>Mileage</th>
+                                            <th>Power</th>
+                                            <th>Seats</th>
+                                            <th class="highlight-col">Predicted ₹</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="batch-table-body">
+                                        <!-- Rows filled by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab 3: Data Analytics (EDA) -->
+                <section id="analytics-tab" class="tab-panel">
+                    <div class="grid-2col-charts">
+                        <!-- Chart 1: Average Price by Year -->
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <i data-lucide="trending-up"></i>
+                                <h3>Price Depreciation Trend</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="chart-price-year"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Chart 2: Price Distribution -->
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <i data-lucide="bar-chart-2"></i>
+                                <h3>Price Frequency Distribution</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="chart-price-dist"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Chart 3: Brand Class Volume & Average Price -->
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <i data-lucide="pie-chart"></i>
+                                <h3>Brand Segment Performance</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="chart-brand-class"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Chart 4: Mileage vs Price (with Fuel Color) -->
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <i data-lucide="scatter-chart"></i>
+                                <h3>Mileage vs Valuation Scatter</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="chart-mileage-price"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab 4: Model Analytics -->
+                <section id="model-tab" class="tab-panel">
+                    <div class="grid-model-tab">
+                        <!-- Top left: Model performance statistics -->
+                        <div class="card model-metrics-card">
+                            <div class="card-header">
+                                <i data-lucide="info"></i>
+                                <h3>Regression Performance Metrics</h3>
+                            </div>
+                            <div class="table-container">
+                                <table class="metrics-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Metric</th>
+                                            <th>Training Set (70%)</th>
+                                            <th>Testing Set (30%)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>R² (R-squared)</td>
+                                            <td id="metric-train-r2">--</td>
+                                            <td id="metric-test-r2">--</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Root Mean Squared Error (RMSE)</td>
+                                            <td id="metric-train-rmse">--</td>
+                                            <td id="metric-test-rmse">--</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mean Absolute Error (MAE)</td>
+                                            <td id="metric-train-mae">--</td>
+                                            <td id="metric-test-mae">--</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mean Absolute Percentage Error (MAPE)</td>
+                                            <td id="metric-train-mape">--</td>
+                                            <td id="metric-test-mape">--</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Top right: Feature coefficients (importance) chart -->
+                        <div class="card chart-card coef-chart-card">
+                            <div class="card-header">
+                                <i data-lucide="align-left"></i>
+                                <h3>Feature Impact (Linear Regression Coefficients)</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="chart-coefficients"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Bottom: Detailed Coefficients Explanation -->
+                        <div class="card coefficients-details span-all">
+                            <div class="card-header">
+                                <i data-lucide="list"></i>
+                                <h3>Model Variable Dictionary & Interpretation</h3>
+                            </div>
+                            <div class="table-container">
+                                <table class="data-table" id="coef-dictionary-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Feature</th>
+                                            <th>Coefficient Weight</th>
+                                            <th>Direction</th>
+                                            <th>Business Interpretation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="coef-dict-tbody">
+                                        <!-- Filled by js -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>

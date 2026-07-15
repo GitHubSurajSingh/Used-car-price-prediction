@@ -1,0 +1,187 @@
+{
+    "model_info": {
+        "algorithm": "Ordinary Least Squares (OLS) Linear Regression",
+        "dependent_variable": "Price_log",
+        "intercept": 2.440601078869994,
+        "coefficients": {
+            "Kilometers_Driven": -1.4208751326327648e-07,
+            "Mileage": -0.014729110059587205,
+            "Power": 0.008486860231442402,
+            "Seats": 0.07256641089290576,
+            "Ageofcar": -0.11637081087587144,
+            "Kilometers_Driven_log": -0.0581506094682257,
+            "Location_Bangalore": 0.10785140691009058,
+            "Location_Chennai": -0.025634767700138214,
+            "Location_Coimbatore": 0.04885618564213283,
+            "Location_Delhi": -0.06287184268202084,
+            "Location_Hyderabad": 0.08900028473942327,
+            "Location_Jaipur": -0.10320931644997866,
+            "Location_Kochi": -0.046970030586898914,
+            "Location_Kolkata": -0.2783240311679764,
+            "Location_Mumbai": -0.08295670944477587,
+            "Location_Pune": -0.07380170240341259,
+            "Fuel_Type_Diesel": 0.2399221865983958,
+            "Fuel_Type_Electric": 3.9626705224437515e-15,
+            "Fuel_Type_LPG": -0.06322115247925021,
+            "Fuel_Type_Petrol": -0.0587919665640129,
+            "Transmission_Manual": -0.2148706021742936,
+            "Owner_Type_Fourth & Above": -0.31434628680882026,
+            "Owner_Type_Second": -0.07578068910587281,
+            "Owner_Type_Third": -0.12570633532990041,
+            "Brand_Class_Low": -0.22610866407485175
+        },
+        "metrics": {
+            "Train": {
+                "R2": 0.8981780447718676,
+                "Adj_R2": 0.8975755479953698,
+                "RMSE": 5.480535649046512,
+                "MAE": 2.169510040896475,
+                "MAPE": 22.136058060552507
+            },
+            "Test": {
+                "RMSE": 5.742090365133987,
+                "MAE": 2.280307028141292,
+                "MAPE": 22.65818386533652,
+                "R2": 0.8869596674368726
+            }
+        }
+    },
+    "ranges": {
+        "Kilometers_Driven": {
+            "min": 171.0,
+            "max": 6500000.0,
+            "median": 53000.0,
+            "mean": 58644.29994855085
+        },
+        "Mileage": {
+            "min": 0.0,
+            "max": 33.54,
+            "median": 18.2,
+            "mean": 18.197506431143886
+        },
+        "Engine": {
+            "min": 72,
+            "max": 5461,
+            "median": 1493,
+            "mean": 1619
+        },
+        "Power": {
+            "min": 34.2,
+            "max": 503.0,
+            "median": 94.0,
+            "mean": 112.64691819584976
+        },
+        "Seats": {
+            "min": 0.0,
+            "max": 10.0,
+            "median": 5.0,
+            "mean": 5.2831418281598355
+        },
+        "Ageofcar": {
+            "min": 1,
+            "max": 22,
+            "median": 6,
+            "mean": 6
+        },
+        "Price": {
+            "min": 0.44,
+            "max": 160.0,
+            "median": 5.75,
+            "mean": 9.49204081632653
+        }
+    },
+    "categories": {
+        "Location": [
+            "Ahmedabad",
+            "Bangalore",
+            "Chennai",
+            "Coimbatore",
+            "Delhi",
+            "Hyderabad",
+            "Jaipur",
+            "Kochi",
+            "Kolkata",
+            "Mumbai",
+            "Pune"
+        ],
+        "Fuel_Type": [
+            "CNG",
+            "Diesel",
+            "Electric",
+            "LPG",
+            "Petrol"
+        ],
+        "Transmission": [
+            "Automatic",
+            "Manual"
+        ],
+        "Owner_Type": [
+            "First",
+            "Fourth & Above",
+            "Second",
+            "Third"
+        ],
+        "Brand": [
+            "Audi",
+            "BMW",
+            "Datsun",
+            "Fiat",
+            "Ford",
+            "Honda",
+            "Hyundai",
+            "Isuzu",
+            "Jaguar",
+            "Jeep",
+            "Land Rover",
+            "Mahindra",
+            "Maruti",
+            "Mercedes-Benz",
+            "Mini Cooper",
+            "Mitsubishi",
+            "Nissan",
+            "Renault",
+            "Skoda",
+            "Tata",
+            "Toyota",
+            "Volkswagen",
+            "Volvo"
+        ]
+    },
+    "brand_classification": {
+        "Low": [
+            "Maruti",
+            "Hyundai",
+            "Ambassdor",
+            "Hindustan",
+            "Force",
+            "Chevrolet",
+            "Fiat",
+            "Tata",
+            "Smart",
+            "Renault",
+            "Datsun",
+            "Mahindra",
+            "Skoda",
+            "Ford",
+            "Toyota",
+            "Isuzu",
+            "Mitsubishi",
+            "Honda"
+        ],
+        "High": [
+            "Audi",
+            "Mini Cooper",
+            "Bentley",
+            "Mercedes-Benz",
+            "Lamborghini",
+            "Volkswagen",
+            "Porsche",
+            "Land Rover",
+            "Nissan",
+            "Volvo",
+            "Jeep",
+            "Jaguar",
+            "BMW"
+        ]
+    }
+}
